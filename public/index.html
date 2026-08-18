@@ -1,24 +1,793 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>BIN AMEEN TRADER</title>
+
 <style>
-body{margin:0;background:#c8d3df;font-family:Arial;color:#1f293d;padding:12px}.wrap{max-width:480px;margin:auto}
-header,.card,.cartbox{background:#fff;border:2px solid #8fa0b5;border-radius:12px;padding:12px;margin-bottom:12px}
-h2{text-align:center;margin:4px}.cats{display:flex;gap:6px;overflow:auto;margin:10px 0}.cats button,button{border:0;border-radius:7px;padding:9px;font-weight:bold;cursor:pointer}.cats button{background:#fff;border:1px solid #8fa0b5}.active,.main{background:#1f293d!important;color:#fff}.search{width:100%;padding:10px;border:2px solid #8fa0b5;border-radius:8px;box-sizing:border-box}
-.card{display:flex;gap:10px;align-items:center}.pic{width:85px;height:85px;border:1px solid #8fa0b5;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.pic img{max-width:100%;max-height:100%}.info{flex:1}.code,.v{font-size:12px;font-weight:bold;background:#f1f5f9;padding:4px 7px;border-radius:5px}.vs{display:flex;gap:4px;flex-wrap:wrap;margin:5px 0}.v.active{background:#1f293d;color:#fff}.q{display:flex;gap:5px;align-items:center}.q button{background:#475569;color:white}.cartbox{display:none}.cartbox.open{display:block}.item{padding:8px;border:1px solid #8fa0b5;border-radius:6px;margin:5px 0}
-</style></head><body><div class="wrap">
-<header><h2>BIN AMEEN TRADER</h2><div style="text-align:center">Call: 03331390045</div></header>
-<button class="main" style="width:100%" onclick="showCart()">View Cart (<span id="count">0</span>)</button>
-<div class="cats" id="cats"></div><input class="search" id="search" placeholder="Search product name or SKU code..."><div id="list"></div>
-<div class="cartbox" id="cart"><h3>Your Selected Items</h3><div id="cartItems"></div><button class="main" style="width:100%" onclick="wa()">Send Order on WhatsApp</button></div>
+body{
+  margin:0;
+  background:#c8d3df;
+  font-family:Arial,sans-serif;
+  color:#1f293d;
+  padding:12px
+}
+
+.wrap{
+  max-width:480px;
+  margin:auto
+}
+
+header,.card,.cartbox{
+  background:#fff;
+  border:2px solid #8fa0b5;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px
+}
+
+h2{
+  text-align:center;
+  margin:4px
+}
+
+.cats{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  margin:10px 0
+}
+
+.cats button,
+button{
+  border:0;
+  border-radius:7px;
+  padding:9px;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.cats button{
+  background:#fff;
+  border:1px solid #8fa0b5;
+  white-space:nowrap
+}
+
+.active,
+.main{
+  background:#1f293d!important;
+  color:#fff
+}
+
+.search{
+  width:100%;
+  padding:10px;
+  border:2px solid #8fa0b5;
+  border-radius:8px;
+  box-sizing:border-box;
+  margin-bottom:12px
+}
+
+.card{
+  display:flex;
+  gap:10px;
+  align-items:center
+}
+
+.pic{
+  width:85px;
+  height:85px;
+  border:1px solid #8fa0b5;
+  border-radius:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  overflow:hidden;
+  background:#fff
+}
+
+.pic img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain
+}
+
+.info{
+  flex:1;
+  min-width:0
+}
+
+.code,
+.v{
+  font-size:12px;
+  font-weight:bold;
+  background:#f1f5f9;
+  padding:4px 7px;
+  border-radius:5px
+}
+
+.vs{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+  margin:5px 0
+}
+
+.v.active{
+  background:#1f293d;
+  color:#fff
+}
+
+.q{
+  display:flex;
+  gap:5px;
+  align-items:center;
+  margin-top:6px
+}
+
+.q button{
+  background:#475569;
+  color:white;
+  min-width:35px
+}
+
+.cartbox{
+  display:none
+}
+
+.cartbox.open{
+  display:block
+}
+
+.item{
+  padding:8px;
+  border:1px solid #8fa0b5;
+  border-radius:6px;
+  margin:5px 0
+}
+
+.loading{
+  text-align:center;
+  padding:20px;
+  background:white;
+  border-radius:10px;
+  border:2px solid #8fa0b5
+}
+
+.error{
+  background:#fff;
+  border:2px solid #b91c1c;
+  color:#b91c1c;
+  border-radius:10px;
+  padding:15px;
+  text-align:center;
+  margin-bottom:12px
+}
+
+.product-name{
+  display:block;
+  margin-top:5px;
+  font-weight:bold;
+  word-break:break-word
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<header>
+  <h2>BIN AMEEN TRADER</h2>
+  <div style="text-align:center">
+    Call: 03331390045
+  </div>
+</header>
+
+<button
+  class="main"
+  style="width:100%"
+  onclick="showCart()"
+>
+  View Cart (<span id="count">0</span>)
+</button>
+
+<div class="cats" id="cats"></div>
+
+<input
+  class="search"
+  id="search"
+  placeholder="Search product name or SKU code..."
+  type="search"
+>
+
+<div id="list">
+  <div class="loading">Loading items...</div>
 </div>
+
+<div class="cartbox" id="cart">
+
+  <h3>Your Selected Items</h3>
+
+  <div id="cartItems"></div>
+
+  <button
+    class="main"
+    style="width:100%"
+    onclick="wa()"
+  >
+    Send Order on WhatsApp
+  </button>
+
+</div>
+
+</div>
+
 <script>
-let products=[],sel={},cart={},category="ALL";
-async function load(){products=await fetch('/api/products').then(r=>r.json());products.forEach(p=>sel[p.id]=0);drawCats();render()}
-function drawCats(){let a=['ALL',...new Set(products.map(p=>p.category))];cats.innerHTML=a.map(x=>`<button class="${x==category?'active':''}" onclick="category='${x}';drawCats();render()">${x==='ALL'?'ALL ITEMS':x}</button>`).join('')}
-function render(){let q=search.value.toLowerCase();let a=products.filter(p=>(category==='ALL'||p.category===category)&&(p.name.toLowerCase().includes(q)||p.variants.some(v=>(v.code||'').toLowerCase().includes(q))));list.innerHTML=a.length?'':'<div class=card>No items found</div>';a.forEach(p=>{let i=sel[p.id]||0,v=p.variants[i],k=p.id+'_'+v.label,n=cart[k]?.qty||0;let d=document.createElement('div');d.className='card';d.innerHTML=`<div class=pic><img src="${v.img||p.img||''}"></div><div class=info><span class=code>CODE: ${v.code}</span><b>${p.name}</b><div class=vs>${p.variants.map((x,j)=>`<button class="v ${j==i?'active':''}" onclick="sel[${p.id}]=${j};render()">${x.label}</button>`).join('')}</div><div class=q><button onclick="change(${p.id},-1)">−</button><b>${n}</b><button onclick="change(${p.id},1)">+</button></div></div>`;list.appendChild(d)})}
-function change(id,d){let p=products.find(x=>x.id===id),v=p.variants[sel[id]||0],k=p.id+'_'+v.label,n=(cart[k]?.qty||0)+d;if(n<=0)delete cart[k];else cart[k]={name:p.name,variant:v.label,code:v.code,qty:n};count.textContent=Object.values(cart).reduce((s,x)=>s+x.qty,0);render()}
-function showCart(){cartbox.classList.toggle('open');cartItems.innerHTML=Object.keys(cart).map(k=>{let x=cart[k];return `<div class=item><b>${x.name}</b><br>${x.variant} | Code: ${x.code} | Qty: ${x.qty}</div>`}).join('')||'<div class=item>Cart is empty</div>'}
-function wa(){let m='*NEW ORDER - BIN AMEEN TRADER*\n\n';Object.values(cart).forEach((x,i)=>m+=`${i+1}. *${x.name}*\nVariant: ${x.variant}\nCode: ${x.code} | Qty: *${x.qty}*\n\n`);if(!Object.keys(cart).length)return alert('Cart is empty');open('https://wa.me/923331390045?text='+encodeURIComponent(m))}
-search.oninput=render;load();
-</script></body></html>
+
+let products = [];
+let sel = {};
+let cart = {};
+let category = "ALL";
+
+const catsEl = document.getElementById("cats");
+const searchEl = document.getElementById("search");
+const listEl = document.getElementById("list");
+const cartEl = document.getElementById("cart");
+const cartItemsEl = document.getElementById("cartItems");
+const countEl = document.getElementById("count");
+
+
+/* =========================
+   LOAD PRODUCTS
+========================= */
+
+async function load(){
+
+  try{
+
+    listEl.innerHTML =
+      '<div class="loading">Loading items...</div>';
+
+    const response =
+      await fetch("/api/products", {
+        method:"GET",
+        cache:"no-store"
+      });
+
+    if(!response.ok){
+      throw new Error(
+        "API Error: " + response.status
+      );
+    }
+
+    const data = await response.json();
+
+    if(!Array.isArray(data)){
+      throw new Error("Products data is not an array");
+    }
+
+    products = data;
+
+    products.forEach(function(p){
+
+      if(!p.variants){
+        p.variants = [];
+      }
+
+      if(!sel[p.id]){
+        sel[p.id] = 0;
+      }
+
+    });
+
+    drawCats();
+    render();
+
+  }catch(error){
+
+    console.error(error);
+
+    listEl.innerHTML = `
+      <div class="error">
+        <b>Items load نہیں ہو سکے۔</b>
+        <br><br>
+        API Error
+        <br>
+        ${error.message}
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* =========================
+   CATEGORIES
+========================= */
+
+function drawCats(){
+
+  const categories = [
+    "ALL",
+    ...new Set(
+      products
+        .map(p => p.category)
+        .filter(Boolean)
+    )
+  ];
+
+  catsEl.innerHTML =
+    categories.map(function(x){
+
+      return `
+        <button
+          class="${x === category ? "active" : ""}"
+          onclick="selectCategory(${JSON.stringify(x)})"
+        >
+          ${x === "ALL" ? "ALL ITEMS" : escapeHtml(x)}
+        </button>
+      `;
+
+    }).join("");
+
+}
+
+
+function selectCategory(x){
+
+  category = x;
+
+  drawCats();
+  render();
+
+}
+
+
+/* =========================
+   RENDER PRODUCTS
+========================= */
+
+function render(){
+
+  const q =
+    searchEl.value
+      .trim()
+      .toLowerCase();
+
+  const filtered =
+    products.filter(function(p){
+
+      const categoryMatch =
+        category === "ALL" ||
+        p.category === category;
+
+      const nameMatch =
+        (p.name || "")
+          .toLowerCase()
+          .includes(q);
+
+      const codeMatch =
+        (p.variants || []).some(function(v){
+
+          return (v.code || "")
+            .toLowerCase()
+            .includes(q);
+
+        });
+
+      return categoryMatch &&
+             (nameMatch || codeMatch);
+
+    });
+
+
+  if(filtered.length === 0){
+
+    listEl.innerHTML =
+      '<div class="card">No items found</div>';
+
+    return;
+
+  }
+
+
+  listEl.innerHTML = "";
+
+
+  filtered.forEach(function(p){
+
+    const variants =
+      Array.isArray(p.variants)
+        ? p.variants
+        : [];
+
+
+    if(variants.length === 0){
+      return;
+    }
+
+
+    let index =
+      Number.isInteger(sel[p.id])
+        ? sel[p.id]
+        : 0;
+
+
+    if(index >= variants.length){
+      index = 0;
+      sel[p.id] = 0;
+    }
+
+
+    const v = variants[index];
+
+
+    const key =
+      p.id + "_" + (v.label || index);
+
+
+    const qty =
+      cart[key]?.qty || 0;
+
+
+    const image =
+      v.img ||
+      p.img ||
+      "";
+
+
+    const div =
+      document.createElement("div");
+
+    div.className = "card";
+
+
+    div.innerHTML = `
+
+      <div class="pic">
+
+        ${
+          image
+          ?
+          `<img
+             src="${escapeAttribute(image)}"
+             alt="${escapeAttribute(p.name || "")}"
+             onerror="this.style.display='none'"
+           >`
+          :
+          `<span style="font-size:11px">
+             No Image
+           </span>`
+        }
+
+      </div>
+
+
+      <div class="info">
+
+        <span class="code">
+          CODE: ${escapeHtml(v.code || "")}
+        </span>
+
+
+        <span class="product-name">
+          ${escapeHtml(p.name || "")}
+        </span>
+
+
+        <div class="vs">
+
+          ${
+            variants.map(function(x,j){
+
+              return `
+                <button
+                  class="v ${j === index ? "active" : ""}"
+                  onclick="selectVariant(${p.id},${j})"
+                >
+                  ${escapeHtml(x.label || "")}
+                </button>
+              `;
+
+            }).join("")
+          }
+
+        </div>
+
+
+        <div class="q">
+
+          <button
+            onclick="change(${p.id},-1)"
+          >
+            −
+          </button>
+
+          <b>${qty}</b>
+
+          <button
+            onclick="change(${p.id},1)"
+          >
+            +
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    listEl.appendChild(div);
+
+  });
+
+}
+
+
+/* =========================
+   VARIANT
+========================= */
+
+function selectVariant(id,index){
+
+  sel[id] = index;
+
+  render();
+
+}
+
+
+/* =========================
+   CART
+========================= */
+
+function change(id,d){
+
+  const p =
+    products.find(
+      x => String(x.id) === String(id)
+    );
+
+  if(!p || !p.variants || !p.variants.length){
+    return;
+  }
+
+
+  const index =
+    Number.isInteger(sel[id])
+      ? sel[id]
+      : 0;
+
+
+  const v =
+    p.variants[index];
+
+
+  const key =
+    p.id + "_" + (v.label || index);
+
+
+  const current =
+    cart[key]?.qty || 0;
+
+
+  const newQty =
+    current + d;
+
+
+  if(newQty <= 0){
+
+    delete cart[key];
+
+  }else{
+
+    cart[key] = {
+
+      name:p.name,
+
+      variant:
+        v.label ||
+        v.size ||
+        "",
+
+      code:
+        v.code ||
+        "",
+
+      qty:newQty
+
+    };
+
+  }
+
+
+  updateCount();
+
+  render();
+
+  updateCart();
+
+}
+
+
+/* =========================
+   CART COUNT
+========================= */
+
+function updateCount(){
+
+  const total =
+    Object.values(cart)
+      .reduce(
+        (sum,x) =>
+          sum + Number(x.qty || 0),
+        0
+      );
+
+  countEl.textContent = total;
+
+}
+
+
+/* =========================
+   SHOW CART
+========================= */
+
+function showCart(){
+
+  cartEl.classList.toggle("open");
+
+  updateCart();
+
+}
+
+
+/* =========================
+   CART ITEMS
+========================= */
+
+function updateCart(){
+
+  const keys =
+    Object.keys(cart);
+
+
+  if(keys.length === 0){
+
+    cartItemsEl.innerHTML =
+      '<div class="item">Cart is empty</div>';
+
+    return;
+
+  }
+
+
+  cartItemsEl.innerHTML =
+    keys.map(function(k){
+
+      const x = cart[k];
+
+      return `
+
+        <div class="item">
+
+          <b>
+            ${escapeHtml(x.name)}
+          </b>
+
+          <br>
+
+          ${escapeHtml(x.variant)}
+          |
+          Code:
+          ${escapeHtml(x.code)}
+
+          |
+          Qty:
+          <b>${x.qty}</b>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================
+   WHATSAPP
+========================= */
+
+function wa(){
+
+  if(
+    Object.keys(cart).length === 0
+  ){
+
+    alert("Cart is empty");
+
+    return;
+
+  }
+
+
+  let message =
+    "*NEW ORDER - BIN AMEEN TRADER*"
+    + "\n\n";
+
+
+  Object.values(cart)
+    .forEach(function(x,i){
+
+      message +=
+        `${i+1}. *${x.name}*\n` +
+        `Variant: ${x.variant}\n` +
+        `Code: ${x.code} | Qty: *${x.qty}*\n\n`;
+
+    });
+
+
+  const url =
+    "https://wa.me/923331390045?text="
+    + encodeURIComponent(message);
+
+
+  window.open(url,"_blank");
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+searchEl.addEventListener(
+  "input",
+  render
+);
+
+
+/* =========================
+   SECURITY / HTML ESCAPE
+========================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttribute(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/"/g,"&quot;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+load();
+
+</script>
+
+</body>
+</html>
